@@ -7,7 +7,6 @@
 ## 1-2 参数
 
         eg:
-            http://apis/haoshenqi.top/holiday?day=18000
             http://apis/haoshenqi.top/holiday?date=2019-05-01
             http://apis/haoshenqi.top/holiday?month=2019-05
             http://apis/haoshenqi.top/holiday?year=2019
