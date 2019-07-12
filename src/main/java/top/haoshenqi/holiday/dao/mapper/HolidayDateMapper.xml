@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.haoshenqi.holiday.dao.mybatis.HolidayDateMapper">
+
+    <insert id="insertHolidayDate" parameterType="top.haoshenqi.holiday.model.HolidayDate">
+        (
+        <trim suffixOverrides=",">
+            <if test="date!=null">
+                `date`,
+            </if>
+            <if test="year!=null">
+                `year`,
+            </if>
+            <if test="month!=null">
+                `month`,
+            </if>
+            <if test="day!=null">
+                `day`,
+            </if>
+            <if test="status!=null">
+                `status`,
+            </if>
+        </trim>
+        )
+        VALUES
+        (
+        <trim suffixOverrides=",">
+            <if test="date!=null">
+                #{date},
+            </if>
+            <if test="year!=null">
+                #{year},
+            </if>
+            <if test="month!=null">
+                #{month},
+            </if>
+            <if test="day!=null">
+                #{day},
+            </if>
+            <if test="status!=null">
+                #{status},
+            </if>
+        </trim>
+        )
+    </insert>
+
+
+    <insert id="batchInsertHolidayDate"  parameterType="java.util.List" >
+        INSERT INTO `holiday_date`
+        ( `date`,`year`,`month`,`day`,`status` )
+        VALUES
+        <foreach collection="list" item="item" index="index"   separator=",">
+            ( #{item.date} ,#{item.year},#{item.month},#{item.day}, #{item.status})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        `status` = values(status)
+
+    </insert>
+    <insert id="insertGroupHoliday">
+        INSERT INTO `t_group_date`
+        ( `group_id`,`rule_id`,`date`,`status` )
+        VALUES
+        (#{groupId} ,#{ruleId},#{date}, #{status})
+        ON DUPLICATE KEY UPDATE
+        `status` = #{status}
+
+
+    </insert>
+    <update id="updateHolidayDate">
+        UPDATE `holiday_date`
+        SET
+        <trim suffixOverrides=",">
+            <if test="year != null">
+                `year` = #{year},
+            </if>
+            <if test="month != null">
+                `month` = #{month},
+            </if>
+            <if test="day != null">
+                `day` = #{day},
+            </if>
+            <if test="status != null">
+                `status` = #{status},
+            </if>
+        </trim>
+        WHERE
+        <trim suffixOverrides="and">
+            `date` = #{date} and
+        </trim>
+    </update>
+
+    <update id="update">
+        UPDATE `holiday_date`
+        SET
+        <trim suffixOverrides=",">
+            <if test="set.year != null">
+                `year` = #{set.year},
+            </if>
+            <if test="set.month != null">
+                `month` = #{set.month},
+            </if>
+            <if test="set.day != null">
+                `day` = #{set.day},
+            </if>
+            <if test="set.status != null">
+                `status` = #{set.status},
+            </if>
+        </trim>
+        <trim prefix="where" suffixOverrides="and | or">
+            <if test="where.dateList != null">
+                `date` in
+                <foreach collection="where.dateList" close=")" open="(" separator="," item="item">
+                    #{item}
+                </foreach> and
+            </if>
+            <if test ="where.fuzzyDate!=null and where.fuzzyDate.size()>0">
+                (
+                <foreach collection="where.fuzzyDate"  separator="or" item="item">
+                    `Date` like concat('%',#{item},'%')
+                </foreach>
+                ) and
+            </if>
+            <if test ="where.rightFuzzyDate!=null and where.rightFuzzyDate.size()>0">
+                (
+                <foreach collection="where.rightFuzzyDate"  separator="or" item="item">
+                    `Date` like concat(#{item},'%')
+                </foreach>
+                ) and
+            </if>
+            <if test="where.yearList != null">
+                `year` in
+                <foreach collection="where.yearList" close=")" open="(" separator="," item="item">
+                    #{item}
+                </foreach> and
+            </if>
+            <if test="where.yearSt !=null">
+                `year` >= #{where.yearSt} and
+            </if>
+            <if test="where.yearEd!=null">
+                `year` &lt;= #{where.yearEd} and
+            </if>
+            <if test="where.monthList != null">
+                `month` in
+                <foreach collection="where.monthList" close=")" open="(" separator="," item="item">
+                    #{item}
+                </foreach> and
+            </if>
+            <if test="where.monthSt !=null">
+                `month` >= #{where.monthSt} and
+            </if>
+            <if test="where.monthEd!=null">
+                `month` &lt;= #{where.monthEd} and
+            </if>
+            <if test="where.dayList != null">
+                `day` in
+                <foreach collection="where.dayList" close=")" open="(" separator="," item="item">
+                    #{item}
+                </foreach> and
+            </if>
+            <if test="where.daySt !=null">
+                `day` >= #{where.daySt} and
+            </if>
+            <if test="where.dayEd!=null">
+                `day` &lt;= #{where.dayEd} and
+            </if>
+            <if test="where.statusList != null">
+                `status` in
+                <foreach collection="where.statusList" close=")" open="(" separator="," item="item">
+                    #{item}
+                </foreach> and
+            </if>
+            <if test="where.statusSt !=null">
+                `status` >= #{where.statusSt} and
+            </if>
+            <if test="where.statusEd!=null">
+                `status` &lt;= #{where.statusEd} and
+            </if>
+        </trim>
+    </update>
+
+
+    <resultMap type="top.haoshenqi.holiday.model.HolidayDate" id="HolidayDateMap">
+        <result property="date" column="date"/>
+        <result property="year" column="year"/>
+        <result property="month" column="month"/>
+        <result property="day" column="day"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+
+    <select id="queryHolidayDate" resultMap="HolidayDateMap">
+        select
+        <include refid="baseResult"></include>
+        from  `holiday_date`
+        <trim prefix="where" suffixOverrides="and | or">
+            <if test="date != null and date!=''">
+                `date` = #{date} and
+            </if>
+            <if test="year != null">
+                `year` = #{year} and
+            </if>
+            <if test="month != null">
+                `month` = #{month} and
+            </if>
+            <if test="day != null">
+                `day` = #{day} and
+            </if>
+            <if test="status != null">
+                `status` = #{status} and
+            </if>
+        </trim>
+    </select>
+
+    <select id="queryHolidayDateLimit1" resultMap="HolidayDateMap">
+        select
+        <include refid="baseResult"></include>
+        from  `holiday_date`
+        <trim prefix="where" suffixOverrides="and | or">
+            <if test="date != null and date!=''">
+                `date` = #{date} and
+            </if>
+            <if test="year != null">
+                `year` = #{year} and
+            </if>
+            <if test="month != null">
+                `month` = #{month} and
+            </if>
+            <if test="day != null">
+                `day` = #{day} and
+            </if>
+            <if test="status != null">
+                `status` = #{status} and
+            </if>
+
+        </trim>
+        limit 1
+    </select>
+    <select id="getWorkdayStatusByGroupId" resultType="integer">
+        select status from t_group_date
+        where group_id = #{groupId}
+        and date = #{date}
+    </select>
+    <select id="getWorkDayList" resultType="string">
+        select date from t_group_date
+        where group_id = #{groupId}
+        and status = 4
+    </select>
+    <select id="getHolidayList" resultType="string">
+        select `date` from t_group_date
+        where group_id = #{groupId}
+              and status = 5
+    </select>
+
+    <sql id="allResult">
+        <trim suffixOverrides=",">
+            `date`,
+            `year`,
+            `month`,
+            `day`,
+            `status`,
+        </trim>
+    </sql>
+
+
+
+    <sql id="baseResult">
+                <include refid="allResult"></include>
+    </sql>
+
+
+
+
+</mapper>
