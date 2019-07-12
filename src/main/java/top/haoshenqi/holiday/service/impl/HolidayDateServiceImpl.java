@@ -5,12 +5,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.haoshenqi.holiday.dao.mybatis.HolidayDateMapper;
 import top.haoshenqi.holiday.model.HolidayDate;
 import top.haoshenqi.holiday.service.HolidayDateService;
 import top.haoshenqi.holiday.utils.DateTimeUtils;
+import top.haoshenqi.holiday.utils.DateUtil;
 import top.haoshenqi.holiday.utils.HolidayUtil;
 
 import java.util.ArrayList;
@@ -129,6 +131,28 @@ public class HolidayDateServiceImpl implements HolidayDateService {
         holidayDateDao.batchInsertHolidayDate(allList);
 
 
+    }
+
+    @Override
+    public HolidayDate getHoliday(Integer day) {
+        HolidayDate date = new HolidayDate();
+        date.setDate( DateUtil.formatDay(day));
+        return holidayDateDao.queryHolidayDateLimit1(date);
+    }
+
+    @Override
+    public List<HolidayDate> getHolidays(String date) {
+        HolidayDate record = new HolidayDate();
+        String[] split = date.split("-");
+        if(split.length==1){
+            record.setYear(Integer.parseInt(split[0]));
+        }else if(split.length==2){
+            record.setYear(Integer.parseInt(split[0]));
+            record.setMonth(Integer.parseInt(split[1]));
+        }else if(split.length==3){
+            record.setDate(date);
+        }
+        return holidayDateDao.queryHolidayDate(record);
     }
 
 

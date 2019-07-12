@@ -33,7 +33,7 @@ import java.util.Map;
  * @date 17-8-11 下午4:36
  * @version
  */
-public class DataUtils {
+public class DateUtil {
 
 
     private static final long MILLS_8_HOUR = 28800000;

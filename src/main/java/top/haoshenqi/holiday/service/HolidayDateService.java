@@ -1,5 +1,9 @@
 package top.haoshenqi.holiday.service;
 
+import top.haoshenqi.holiday.model.HolidayDate;
+
+import java.util.List;
+
 /**
  * holiday date service
  */
@@ -30,4 +34,7 @@ public interface HolidayDateService {
      */
     public void initHoliday(int year);
 
+    HolidayDate getHoliday(Integer day);
+
+    List<HolidayDate> getHolidays(String date);
 }
