@@ -5,7 +5,6 @@
 * 自动更新
 * 保存到数据库中，减少对网络依赖
 * 只有一个接口，调用简单
-* 个人项目，不保证永久维护
 * 免费使用
 
 ## 直接使用
@@ -38,11 +37,12 @@
 
 ### 注意事项
 
-* 修改你的 spring.datasource
-* 需要安装lombok插件 http://plugins.jetbrains.com/plugin/6317-lombok
+* 修改你的 resource下的application.properties spring.datasource
+* 运行test 下的init()方法初始化当前年份的节假日信息
+* 需要安装lombok插件 <http://plugins.jetbrains.com/plugin/6317-lombok>
 
 ## 打赏
 
-![Image text](http://biaoqingbao.haoshenqi.top/img/wechat.jpg)
+<img src="http://biaoqingbao.haoshenqi.top/img/wechat.jpg" width = "400" height = "400" alt="图片名称" align=center>
 
-![Image text](http://biaoqingbao.haoshenqi.top/img/alipay.jpg)
+<img src="http://biaoqingbao.haoshenqi.top/img/alipay.jpg" width = "400" height = "400" alt="图片名称" align=center>
