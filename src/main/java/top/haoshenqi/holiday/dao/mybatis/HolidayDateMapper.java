@@ -7,41 +7,49 @@ import top.haoshenqi.holiday.model.HolidayDate;
 import java.util.List;
 
 /**
- * HolidayDateMapper
- * @author haosh
+ * The interface Holiday date mapper.
  */
 @Mapper
 public interface HolidayDateMapper {
     /**
-     * 新增date
+     * Insert holiday date int.
+     *
+     * @param object the object
+     * @return the int
      */
     int insertHolidayDate(HolidayDate object);
 
     /**
-     * 批量新增
+     * Batch insert holiday date int.
+     *
+     * @param list the list
+     * @return the int
      */
     int batchInsertHolidayDate(List<HolidayDate> list);
 
     /**
-     * 更新
+     * Update holiday date int.
+     *
+     * @param object the object
+     * @return the int
      */
     int updateHolidayDate(HolidayDate object);
 
     /**
-     * 查询
+     * Query holiday date list.
+     *
+     * @param object the object
+     * @return the list
      */
     List<HolidayDate> queryHolidayDate(HolidayDate object);
 
     /**
-     * 查询
+     * Query holiday date limit 1 holiday date.
+     *
+     * @param object the object
+     * @return the holiday date
      */
     HolidayDate queryHolidayDateLimit1(HolidayDate object);
 
-    Integer getWorkdayStatusByGroupId(@Param("groupId") Long groupId, @Param("date") String date);
 
-    void insertGroupHoliday(@Param("groupId") Long id, @Param("ruleId") Long ruleId, @Param("date") String date, @Param("status") Integer status);
-
-    List<String> getWorkDayList(@Param("groupId") Long groupId);
-
-    List<String> getHolidayList(@Param("groupId") Long groupId);
 }

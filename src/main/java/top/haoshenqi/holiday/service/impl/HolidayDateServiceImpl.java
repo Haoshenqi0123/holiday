@@ -30,7 +30,7 @@ public class HolidayDateServiceImpl implements HolidayDateService {
     HolidayDateMapper holidayDateDao;
     @Override
     public void initDefault(int year) {
-        boolean initWeek = initWeek(year);
+        initWeek(year);
     }
 
     private boolean initWeek(int year) {
@@ -57,30 +57,12 @@ public class HolidayDateServiceImpl implements HolidayDateService {
             holidayDateDao.batchInsertHolidayDate(list);
             return true;
         }catch (Exception e){
-            e.printStackTrace();
+            log.info(e.getMessage());
+            log.error(e.getMessage(),e);
             return false;
         }
     }
-    @Override
-    public boolean isWorkDay(int workDayType, String date, long groupId) {
-        Integer holidayStatus = holidayDateDao.getWorkdayStatusByGroupId(groupId,date);
-        if(holidayStatus!=null){
-            return holidayStatus%2==0;
-        }
-        if(workDayType==1){
-            //工作日类型为全部
-            return true;
-        }else {
-            //考勤组未手动设置工作日 按照法定节假日规则
-            HolidayDate holidayDate = new HolidayDate();
-            holidayDate.setDate(date);
-            HolidayDate result = holidayDateDao.queryHolidayDateLimit1(holidayDate);
-            int status =  result.getStatus();
-            return status%2==0;
-        }
 
-
-    }
     /**
      * Init work day.
      * 生成当年的工作日信息
@@ -187,7 +169,7 @@ public class HolidayDateServiceImpl implements HolidayDateService {
         }catch (ClassCastException classCastException){
             log.info("可能是当前月份("+month+"月)没有节日");
         }catch (Exception e){
-            log.error(e.getMessage());
+            log.error(e.getMessage(),e);
         }
         return holidayDateList;
     }
