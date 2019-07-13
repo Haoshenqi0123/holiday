@@ -57,16 +57,7 @@
         `status` = values(status)
 
     </insert>
-    <insert id="insertGroupHoliday">
-        INSERT INTO `t_group_date`
-        ( `group_id`,`rule_id`,`date`,`status` )
-        VALUES
-        (#{groupId} ,#{ruleId},#{date}, #{status})
-        ON DUPLICATE KEY UPDATE
-        `status` = #{status}
 
-
-    </insert>
     <update id="updateHolidayDate">
         UPDATE `holiday_date`
         SET
@@ -236,21 +227,7 @@
         </trim>
         limit 1
     </select>
-    <select id="getWorkdayStatusByGroupId" resultType="integer">
-        select status from t_group_date
-        where group_id = #{groupId}
-        and date = #{date}
-    </select>
-    <select id="getWorkDayList" resultType="string">
-        select date from t_group_date
-        where group_id = #{groupId}
-        and status = 4
-    </select>
-    <select id="getHolidayList" resultType="string">
-        select `date` from t_group_date
-        where group_id = #{groupId}
-              and status = 5
-    </select>
+
 
     <sql id="allResult">
         <trim suffixOverrides=",">

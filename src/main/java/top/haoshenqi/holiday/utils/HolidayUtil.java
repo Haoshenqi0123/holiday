@@ -1,5 +1,6 @@
 package top.haoshenqi.holiday.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -14,6 +15,7 @@ import java.io.IOException;
  * holiday util
  * @author haosh
  */
+@Slf4j
 public class HolidayUtil {
 
     public static String getMonth(String year, String month){
@@ -37,10 +39,8 @@ public class HolidayUtil {
             result = reParseJson(content);
             return  result;
         } catch (Exception e) {
-            System.out.println(" SocketTimeoutException " +
-                    System.currentTimeMillis());
-            e.printStackTrace();
-            return result;
+            log.info(" SocketTimeoutException " + System.currentTimeMillis());
+            log.error(e.getMessage(),e);
         }finally {
             if (hResponse != null) {
                 try {

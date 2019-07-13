@@ -17,6 +17,9 @@ public class HolidayApplicationTests {
     public void contextLoads() {
     }
 
+    /**
+     * 首次部署最好运行此方法，生成当年的节假日信息
+     */
     @Test
     public void init(){
         scheduledService.getWorkDay();

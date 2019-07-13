@@ -5,12 +5,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.haoshenqi.holiday.dao.mybatis.HolidayDateMapper;
 import top.haoshenqi.holiday.model.HolidayDate;
 import top.haoshenqi.holiday.service.HolidayDateService;
 import top.haoshenqi.holiday.utils.DateTimeUtils;
+import top.haoshenqi.holiday.utils.DateUtil;
 import top.haoshenqi.holiday.utils.HolidayUtil;
 
 import java.util.ArrayList;
@@ -28,7 +30,7 @@ public class HolidayDateServiceImpl implements HolidayDateService {
     HolidayDateMapper holidayDateDao;
     @Override
     public void initDefault(int year) {
-        boolean initWeek = initWeek(year);
+        initWeek(year);
     }
 
     private boolean initWeek(int year) {
@@ -55,30 +57,12 @@ public class HolidayDateServiceImpl implements HolidayDateService {
             holidayDateDao.batchInsertHolidayDate(list);
             return true;
         }catch (Exception e){
-            e.printStackTrace();
+            log.info(e.getMessage());
+            log.error(e.getMessage(),e);
             return false;
         }
     }
-    @Override
-    public boolean isWorkDay(int workDayType, String date, long groupId) {
-        Integer holidayStatus = holidayDateDao.getWorkdayStatusByGroupId(groupId,date);
-        if(holidayStatus!=null){
-            return holidayStatus%2==0;
-        }
-        if(workDayType==1){
-            //工作日类型为全部
-            return true;
-        }else {
-            //考勤组未手动设置工作日 按照法定节假日规则
-            HolidayDate holidayDate = new HolidayDate();
-            holidayDate.setDate(date);
-            HolidayDate result = holidayDateDao.queryHolidayDateLimit1(holidayDate);
-            int status =  result.getStatus();
-            return status%2==0;
-        }
 
-
-    }
     /**
      * Init work day.
      * 生成当年的工作日信息
@@ -131,6 +115,28 @@ public class HolidayDateServiceImpl implements HolidayDateService {
 
     }
 
+    @Override
+    public HolidayDate getHoliday(Integer day) {
+        HolidayDate date = new HolidayDate();
+        date.setDate( DateUtil.formatDay(day));
+        return holidayDateDao.queryHolidayDateLimit1(date);
+    }
+
+    @Override
+    public List<HolidayDate> getHolidays(String date) {
+        HolidayDate record = new HolidayDate();
+        String[] split = date.split("-");
+        if(split.length==1){
+            record.setYear(Integer.parseInt(split[0]));
+        }else if(split.length==2){
+            record.setYear(Integer.parseInt(split[0]));
+            record.setMonth(Integer.parseInt(split[1]));
+        }else if(split.length==3){
+            record.setDate(date);
+        }
+        return holidayDateDao.queryHolidayDate(record);
+    }
+
 
     /**
      * Init month list.
@@ -163,7 +169,7 @@ public class HolidayDateServiceImpl implements HolidayDateService {
         }catch (ClassCastException classCastException){
             log.info("可能是当前月份("+month+"月)没有节日");
         }catch (Exception e){
-            log.error(e.getMessage());
+            log.error(e.getMessage(),e);
         }
         return holidayDateList;
     }

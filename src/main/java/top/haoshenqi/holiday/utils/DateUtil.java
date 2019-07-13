@@ -33,7 +33,7 @@ import java.util.Map;
  * @date 17-8-11 下午4:36
  * @version
  */
-public class DataUtils {
+public class DateUtil {
 
 
     private static final long MILLS_8_HOUR = 28800000;
@@ -46,16 +46,16 @@ public class DataUtils {
 
     private static final int SECONDS_A_MINUTE = 60;
 
-    public static Map<Integer, String> WeekMap = new HashMap<>();
+    public static final Map<Integer, String> WEEK_MAP = new HashMap<>();
 
     static {
-        WeekMap.put(1, "日");
-        WeekMap.put(2, "一");
-        WeekMap.put(3, "二");
-        WeekMap.put(4, "三");
-        WeekMap.put(5, "四");
-        WeekMap.put(6, "五");
-        WeekMap.put(7, "六");
+        WEEK_MAP.put(1, "日");
+        WEEK_MAP.put(2, "一");
+        WEEK_MAP.put(3, "二");
+        WEEK_MAP.put(4, "三");
+        WEEK_MAP.put(5, "四");
+        WEEK_MAP.put(6, "五");
+        WEEK_MAP.put(7, "六");
     }
     public static Integer getMinByMillisecond(Long millisecond){
         return Integer.parseInt(String.valueOf(millisecond/(1000*60)));

@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * user: li
  * date: 2018/7/23.
+ * @author pc
  */
 @SuppressWarnings({ "unused" })
 public class DateTimeUtils {
@@ -87,7 +88,13 @@ public class DateTimeUtils {
         return formatter.format(date);
     }
 
-    //获取给定日期月份的最后一天的日期
+    /**
+     * 获取给定日期月份的最后一天的日期
+     * @param dateStr
+     * @param format
+     * @return
+     * @throws Exception
+     */
     public static String getLastDayOfMonth(String dateStr, String format) throws Exception{
         SimpleDateFormat formatter = new SimpleDateFormat(format);
         Date date =formatter.parse(dateStr);
@@ -107,7 +114,12 @@ public class DateTimeUtils {
         return dft.format(calendar.getTime());
     }
 
-    //将时间戳转换成时间字符串
+    /**
+     * 将时间戳转换成时间字符串
+     * @param date
+     * @param format
+     * @return
+     */
     public static String getFormatDateStr(Date date,String format){
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         return sdf.format(date);
@@ -161,7 +173,8 @@ public class DateTimeUtils {
 	public static Date getNextDay(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.add(Calendar.DAY_OF_MONTH, +1);//+1今天的时间加一天
+        //+1今天的时间加一天
+        calendar.add(Calendar.DAY_OF_MONTH, +1);
         date = calendar.getTime();
         return date;
     }

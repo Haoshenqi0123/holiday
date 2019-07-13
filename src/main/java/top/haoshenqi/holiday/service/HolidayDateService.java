@@ -1,7 +1,12 @@
 package top.haoshenqi.holiday.service;
 
+import top.haoshenqi.holiday.model.HolidayDate;
+
+import java.util.List;
+
 /**
  * holiday date service
+ * @author pc
  */
 public interface HolidayDateService {
 
@@ -10,10 +15,6 @@ public interface HolidayDateService {
      */
     void initDefault(int year);
 
-    /**
-     * isworkday
-     */
-    public boolean isWorkDay(int workDayType, String date, long groupId);
 
     /**
      * init wordDay
@@ -30,4 +31,7 @@ public interface HolidayDateService {
      */
     public void initHoliday(int year);
 
+    HolidayDate getHoliday(Integer day);
+
+    List<HolidayDate> getHolidays(String date);
 }
