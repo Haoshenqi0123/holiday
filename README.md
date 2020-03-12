@@ -46,4 +46,4 @@
 <img src="http://soul.haoshenqi.top/1.png" width = "400" height = "400" alt="图片名称" align=center>
 
 
-<img src="http://soul.haoshenqi.top/2.png" width = "400" height = "400" alt="图片名称" align=center>
+<img src="http://soul.haoshenqi.top/2.jpg" width = "400" height = "400" alt="图片名称" align=center>
