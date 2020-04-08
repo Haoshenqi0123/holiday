@@ -16,16 +16,16 @@
 ### 参数
 
         eg:
-            http://api.haoshenqi.top/holiday?date=2019-05-01
-            http://api.haoshenqi.top/holiday?date=2019-05
-            http://api.haoshenqi.top/holiday?date=2019
+            http://api.haoshenqi.top/holiday?date=2020-05-01
+            http://api.haoshenqi.top/holiday?date=2020-05
+            http://api.haoshenqi.top/holiday?date=2020
 
 ### 响应
 
         eg:
             {
-                "date": "2019-05-01",
-                "year": 2019,
+                "date": "2020-05-01",
+                "year": 2020,
                 "month": 5,
                 "day": 1,
                 "status": 3
