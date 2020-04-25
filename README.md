@@ -16,16 +16,16 @@
 ### 参数
 
         eg:
-            http://api.haoshenqi.top/holiday?date=2019-05-01
-            http://api.haoshenqi.top/holiday?date=2019-05
-            http://api.haoshenqi.top/holiday?date=2019
+            http://api.haoshenqi.top/holiday?date=2020-05-01
+            http://api.haoshenqi.top/holiday?date=2020-05
+            http://api.haoshenqi.top/holiday?date=2020
 
 ### 响应
 
         eg:
             {
-                "date": "2019-05-01",
-                "year": 2019,
+                "date": "2020-05-01",
+                "year": 2020,
                 "month": 5,
                 "day": 1,
                 "status": 3
@@ -43,7 +43,7 @@
 
 ## 打赏
 
-<img src="http://biaoqingbao.haoshenqi.top/img/wechat.jpg" width = "400" height = "400" alt="图片名称" align=center>
+<img src="http://soul.haoshenqi.top/1.png" width = "400" height = "400" alt="图片名称" align=center>
 
 
-<img src="http://biaoqingbao.haoshenqi.top/img/alipay.jpg" width = "400" height = "400" alt="图片名称" align=center>
+<img src="http://soul.haoshenqi.top/2.jpg" width = "400" height = "400" alt="图片名称" align=center>
