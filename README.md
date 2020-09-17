@@ -40,9 +40,12 @@
 
 ### 注意事项
 
-* 修改你的 spring.datasource
-* 需要安装lombok插件 http://plugins.jetbrains.com/plugin/6317-lombok
-* $\color{#FF3030}{服务器资源有限，访问过于频繁会把ip加入黑名单，一天后自动解除。}$
+```diff 
++ 修改你的 spring.datasource
++ 需要安装lombok插件 http://plugins.jetbrains.com/plugin/6317-lombok
+- 服务器资源有限，访问过于频繁会把ip加入黑名单，一天后自动解除。
+``` 
+
 
 ## 打赏
 
