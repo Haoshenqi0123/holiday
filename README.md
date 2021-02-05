@@ -42,6 +42,7 @@
 
 ```diff 
 - 百度API接口修改了，正在修复中，请暂时不要依赖，修复完成后会说明
++ 暂时请使用sql文件夹下的sql文件来保证查询。
 
 + 修改你的 spring.datasource
 + 需要安装lombok插件 http://plugins.jetbrains.com/plugin/6317-lombok
