@@ -1,12 +1,18 @@
 package top.haoshenqi.holiday.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * holiday date
  * @author haosh
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class HolidayDate {
     /**
      * 主键

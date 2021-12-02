@@ -22,7 +22,8 @@ public class HolidayUtil {
         String result = "fail";
         String query;
         query = year+"年"+month+"月";
-        String apiUrl = "https://sp0.baidu.com/8aQDcjqpAAV3otqbppnN2DJv/api.php?query="+query+"&co=&resource_id=6018&t="+System.currentTimeMillis()+"&ie=utf8&oe=gbk&cb=op_aladdin_callback&format=json&tn=baidu&cb=jQuery110209630343350406516_1544930242767&_=1544930242772";
+        long timeMillis = System.currentTimeMillis();
+        String apiUrl = "https://sp1.baidu.com/8aQDcjqpAAV3otqbppnN2DJv/api.php?tn=wisetpl&format=json&query="+query+"&co=&resource_id=39043&t="+ timeMillis +"&cb=op_aladdin_callback"+timeMillis;
         CloseableHttpClient httpclient = null;
         CloseableHttpResponse hResponse = null;
         try {
