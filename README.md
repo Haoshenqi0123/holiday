@@ -41,8 +41,7 @@
 ### 注意事项
 
 ```diff 
-- 百度API接口修改了，正在修复中，请暂时不要依赖，修复完成后会说明
-+ 暂时请使用sql文件夹下的sql文件来保证查询。
++ 百度API接口修改了，已经更新了最新的api
 
 + 修改你的 spring.datasource
 + 需要安装lombok插件 http://plugins.jetbrains.com/plugin/6317-lombok
@@ -52,6 +51,6 @@
 
 ## 打赏
 
-<img src="https://blog.babyrabbit.cn/upload/2020/06/o2289uu71cjtdohch4uu7vcmae.jpg" width = "400" height = "400" alt="图片名称" align=center>
+<img src="https://magichouse-pub-read.oss-cn-hangzhou.aliyuncs.com/pay/IMG_2690.JPG" width = "400" height = "400" alt="支付宝" align=center>
 
-<img src="https://blog.babyrabbit.cn/upload/2020/05/41cguoniu4gi4okrt4j57cvkk8.jpg" width = "400" height = "400" alt="图片名称" align=center>
+<img src="https://magichouse-pub-read.oss-cn-hangzhou.aliyuncs.com/pay/IMG_2692.JPG" width = "400" height = "400" alt="微信" align=center>
