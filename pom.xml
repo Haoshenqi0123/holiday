@@ -10,7 +10,7 @@
     </parent>
     <groupId>haoshenqi</groupId>
     <artifactId>holiday</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>2.0.0</version>
     <name>holiday</name>
 
     <properties>

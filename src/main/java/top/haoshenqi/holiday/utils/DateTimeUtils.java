@@ -182,7 +182,6 @@ public class DateTimeUtils {
     @SuppressWarnings("deprecation")
 	public static int getYear(long time){
     	Date date = new Date(time) ;
-    	
     	return date.getMonth();
     }
     /**

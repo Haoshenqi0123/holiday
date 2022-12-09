@@ -19,17 +19,17 @@ public interface HolidayDateService {
     /**
      * init wordDay
      */
-    public void initWorkDay(int year);
+    void initWorkDay(int year);
 
     /**
      * init baseworkday
      */
-    public  void initBaseWorkDay(int year);
+     void initBaseWorkDay(int year);
 
     /**
      * init holiday
      */
-    public void initHoliday(int year);
+    void initHoliday(int year);
 
     HolidayDate getHoliday(Integer day);
 

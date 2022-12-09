@@ -20,6 +20,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -46,6 +48,8 @@ public class DateUtil {
 
     private static final int SECONDS_A_MINUTE = 60;
 
+    private static final String  DATE_FORMATTER = "yyyy-MM-dd";
+
     public static final Map<Integer, String> WEEK_MAP = new HashMap<>();
 
     static {
@@ -68,15 +72,6 @@ public class DateUtil {
         return day * MILLS_A_DAY - MILLS_8_HOUR + time * MILLS_A_SECOND;
     }
 
-
-    /**
-     * parse day counts related to 1970.01.01(UTC+8) from mills timestamp
-     * @param time
-     * @return
-     */
-
-
-
     /**
      * format day int to 'yyyy-MM-dd'
      * @param day
@@ -84,7 +79,7 @@ public class DateUtil {
      */
     public static String formatDay(int day){
         long time = getTimestampByDaySeconds(day, 0);
-        return DateFormatUtils.format(time, "yyyy-MM-dd");
+        return DateFormatUtils.format(time,DATE_FORMATTER);
     }
 
     public static int getCurDayInt() {
@@ -93,10 +88,20 @@ public class DateUtil {
 
 
     public static String getCurDate(){
-
         Date d = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMATTER);
         String dateNowStr = sdf.format(d);
         return dateNowStr ;
+    }
+
+    public static String getYesterday() {
+        LocalDateTime tomorrow = LocalDateTime.now().plusDays(-1);
+        String format = tomorrow.format(DateTimeFormatter.ofPattern(DATE_FORMATTER));
+        return format;
+    }
+    public static String getTomorrow() {
+        LocalDateTime tomorrow = LocalDateTime.now().plusDays(1);
+        String format = tomorrow.format(DateTimeFormatter.ofPattern(DATE_FORMATTER));
+        return format;
     }
 }
