@@ -64,6 +64,6 @@
 
 ## 打赏
 
-<img src="https://magichouse-pub-read.oss-cn-hangzhou.aliyuncs.com/pay/IMG_2690.JPG" width = "400" height = "400" alt="支付宝" align=center>
+<img src="https://oss.haoshenqi.top/pay/IMG_2690.JPG" width = "400" height = "400" alt="支付宝" align=center>
 
-<img src="https://magichouse-pub-read.oss-cn-hangzhou.aliyuncs.com/pay/IMG_2692.JPG" width = "400" height = "400" alt="微信" align=center>
+<img src="https://oss.haoshenqi.top/pay/IMG_2692.JPG" width = "400" height = "400" alt="微信" align=center>
