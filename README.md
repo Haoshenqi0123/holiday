@@ -49,6 +49,25 @@
         -- today 可以换成 tomorrow yesterday
 ## [配合ios快捷操作实现法定节假日闹钟](https://github.com/Haoshenqi0123/holiday/wiki/%E6%94%AF%E6%8C%81IOS%E6%B3%95%E5%AE%9A%E8%8A%82%E5%81%87%E6%97%A5%E9%97%B9%E9%92%9F)
 
+
+## docker-compose 本地化
+### 拉取代码
+```
+git clone https://github.com/Haoshenqi0123/holiday.git
+cd holiday
+```
+### 启动docker容器
+
+```
+docker-compose up -d
+```
+### 测试
+
+```
+ curl localhost:8001/holiday/today
+```
+
+
 ## 二次开发
 
 ### 注意事项
