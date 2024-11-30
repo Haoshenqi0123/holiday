@@ -72,7 +72,5 @@
 
 
 ## 打赏
-
-<img src="https://oss.haoshenqi.top/pay/IMG_2690.JPG" width = "400" height = "400" alt="支付宝" align=center>
-
-<img src="https://oss.haoshenqi.top/pay/IMG_2692.JPG" width = "400" height = "400" alt="微信" align=center>
+![支付宝](https://github.com/user-attachments/assets/81be686e-427e-4302-8ab7-aac20ad3d153)
+![微信](https://github.com/user-attachments/assets/19b1a090-03e6-4390-bc11-21d42ea2a680)
