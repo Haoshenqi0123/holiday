@@ -32,4 +32,9 @@ public class HolidayApplicationTests {
         int currentYear = LocalDate.now().getYear();
         service.initWorkDay(currentYear);
     }
+
+    @Test
+    public void updateNextYear(){
+        service.updateNextYear();
+    }
 }

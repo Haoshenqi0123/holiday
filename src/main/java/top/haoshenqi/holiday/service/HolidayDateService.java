@@ -34,4 +34,6 @@ public interface HolidayDateService {
     HolidayDate getHoliday(Integer day);
 
     List<HolidayDate> getHolidays(String date);
+
+    void updateNextYear();
 }

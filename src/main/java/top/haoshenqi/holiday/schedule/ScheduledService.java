@@ -40,9 +40,9 @@ public class ScheduledService implements ApplicationRunner {
         }
         if(today.getDay() == 25){
             //每月的25日，更新节假日信息
-            log.info("每月25日凌晨一点,更新节假日信息，如果是12月，同时获取下一年的节日信息");
+            log.info("每月25日凌晨一点,更新节假日信息，如果是11或者12月，同时获取下一年的节日信息");
             holidayDateService.initWorkDay(calendar.get(Calendar.YEAR));
-            if (calendar.get(Calendar.MONTH) == 11) {
+            if (calendar.get(Calendar.MONTH) >= 11) {
                 holidayDateService.initWorkDay(calendar.get(Calendar.YEAR) + 1);
             }
         }

@@ -77,5 +77,10 @@ public class HolidayController {
             return null;
         }
     }
+//    @GetMapping("update")
+//    public String updateNextYear(){
+//        holidayDateService.updateNextYear();
+//        return "success!";
+//    }
 
 }
