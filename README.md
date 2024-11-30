@@ -38,6 +38,10 @@
 
             http://api.haoshenqi.top/holiday/today
 
+### 2.0.1 更新
+            1. 跟随百度更新，修改自动获取法定节假日方式。
+            2. 新增一个借口，可以手动更新次年的法定节假日日期。但是为了避免滥用，此接口（http://api.haoshenqi.top/holiday/update）注释掉了，需要的可以本地自行打开。
+
 ### 响应
 
         eg:
