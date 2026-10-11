@@ -8,6 +8,12 @@
 * 个人项目，不保证永久维护
 * 开源免费
 
+## Cloudflare Workers 版(推荐,无需服务器)
+
+项目已迁移为 Cloudflare Worker,存放在 [`worker/`](worker/) 目录:不需要 MySQL、不需要服务器,免费套餐即可运行,接口与本 Java 版保持一致。部署方式见 [worker/README.md](worker/README.md)。
+
+原 Java 版仍可按下方说明使用容器运行。
+
 ## 直接使用
 
 ### 接口地址
