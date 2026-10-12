@@ -97,8 +97,6 @@ dev 不需要真的 KV:wrangler 用的是本地模拟,`scripts/link-kv.mjs --dev
 
 ## 打赏
 
-用 OSS 原始域名而非 `oss.haoshenqi.top`：后者的证书 2024-06-23 已过期，浏览器会直接拒绝加载图片。
+<img src="https://github.com/user-attachments/assets/81be686e-427e-4302-8ab7-aac20ad3d153" width = "400" height = "400" alt="支付宝" align=center>
 
-<img src="https://magichouse-pub-read.oss-cn-hangzhou.aliyuncs.com/pay/IMG_2690.JPG" width = "400" height = "400" alt="支付宝" align=center>
-
-<img src="https://magichouse-pub-read.oss-cn-hangzhou.aliyuncs.com/pay/IMG_2692.JPG" width = "400" height = "400" alt="微信" align=center>
+<img src="https://github.com/user-attachments/assets/19b1a090-03e6-4390-bc11-21d42ea2a680" width = "400" height = "400" alt="微信" align=center>
