@@ -35,20 +35,10 @@ GET /holiday/update            # 手动刷新当年 + 次年数据,需密钥
 | `src/baidu.ts` | 抓百度 opendata,解析节假日 / 补班日 |
 | `src/store.ts` | 内存缓存 + KV 读写,状态计算 |
 | `src/beijing.ts` | 北京时间与日期工具 |
-| `wrangler.jsonc` | 配置模板:Worker 名、cron;KV 由 `scripts/link-kv.mjs` 按环境变量注入 |
+| `scripts/link-kv.mjs` | 按 `HOLIDAY_KV_ID` 生成本次部署用的 `wrangler.gen.jsonc` |
+| `wrangler.jsonc` | 配置模板:Worker 名、cron;不含 KV id |
 
 数据模型比建表简单:一年只存两份列表(法定节假日 `holidays`、需要补班的周末 `workdays`),键名 `holiday:{year}`;普通工作日/周末由星期几直接推导,无需逐日入库。
-
-## 配置项(全部可选)
-
-仓库里不含任何与具体账号相关的值,fork 之后不必改代码,两个开关都走环境变量:
-
-| 变量 | 作用 | 不设置时 |
-| --- | --- | --- |
-| `HOLIDAY_KV_ID` | 你自己账号下 KV 命名空间的 Namespace ID(32 位十六进制),按年缓存节假日数据 | 不绑定 KV,退化为「内存缓存 + 现抓百度」;接口行为不变,只是失去跨实例缓存和抓取失败时回退旧数据的能力 |
-| `UPDATE_KEY` | 放开 `GET /holiday/update` 手动刷新接口的口令 | 该接口固定返回 403,数据仍由每天 01:00 的定时任务刷新 |
-
-`wrangler.jsonc` 只是模板。`npm run dev` / `npm run deploy` 会先执行 `scripts/link-kv.mjs`,按 `HOLIDAY_KV_ID` 生成 `wrangler.gen.jsonc`(已 gitignore,id 因此不会进版本库),再用它部署。之所以要生成而不是插值:wrangler 4.x 不支持在配置里写 `${VAR}`,`deploy` 也没有 `--kv` 参数。
 
 ## 本地开发
 
@@ -59,32 +49,15 @@ npm run dev                             # http://localhost:8787,无 KV 模式,�
 HOLIDAY_KV_ID=<你的 id> npm run dev     # 想连 KV 本地模拟就传
 ```
 
-## 部署到 Cloudflare(免费账号即可)
+## 部署
 
-### 方式一:连 GitHub 仓库,push 自动部署
+完整步骤见 **[DEPLOY.md](DEPLOY.md)**:dashboard git 集成(表单逐项取值、生产分支那个坑)、本地 `wrangler` 部署、`HOLIDAY_KV_ID` 与 `UPDATE_KEY` 两个可选变量的配法、访问验证、故障排查。
 
-1. dashboard → Workers & Pages → Create application → 选中仓库,**生产分支填存放 Worker 代码的分支**(本仓库是 `cloudflare-workers`;默认取仓库默认分支,不改就找不到 `package.json`)。
-2. 构建命令留空,部署命令填 `npm run deploy`,根目录留空。
-3. 可选:在项目的变量(Variables)里加 `HOLIDAY_KV_ID` = 你的 Namespace ID。KV 命名空间在 dashboard → Storage & Databases → KV 创建,建好后概览页直接复制 ID。
-4. 可选:Settings → Variables and Secrets → Add secret,名称 `UPDATE_KEY`。
-
-### 方式二:本地 wrangler 部署
-
-```bash
-npx wrangler login
-npx wrangler kv namespace create HOLIDAY_KV   # 可选,输出里的 id 即 HOLIDAY_KV_ID
-HOLIDAY_KV_ID=<id> npm run deploy
-```
-
-部署后即可通过 `https://holiday-api.<你的子域>.workers.dev/holiday` 访问(Worker 名取自 `wrangler.jsonc` 的 `name`)。
-
-### 绑定自有域名(可选)
-
-Cloudflare 控制台 → Workers & Pages → holiday-api → Settings → Domains & Routes 添加 Custom Domain(如 `api.haoshenqi.top`),域名需已托管在该 Cloudflare 账号下。绑定后原有调用方无需任何改动。
+两个变量都不设也能直接上线:Worker 不绑 KV、`/holiday/update` 关闭,其余接口照常。之所以用「构建时生成 `wrangler.gen.jsonc`」来注入 KV id,而不是写死在仓库里 —— 实测 wrangler 4.x 不支持配置内 `${VAR}` 插值、`deploy` 也没有 `--kv` 参数;而把某个账号的 namespace id 提交进仓库,fork 者要么改代码,要么把自己的数据写进别人的 KV。
 
 ## 运行机制
 
-* **读取**:内存缓存(1 小时)→ KV → 百度 opendata 接口,逐层递进;数据进 KV 后,日常请求零出网。
+* **读取**:内存缓存(1 小时)→ KV(配了 `HOLIDAY_KV_ID` 才参与)→ 百度 opendata 接口,逐层递进;数据进 KV 后,日常请求零出网。
 * **定时任务**:每天北京时间 01:00(`0 17 * * *` UTC)执行:
   1. 当年数据缺失时自动补抓(首次部署无需手工初始化);
   2. 今天是节假日最后一天时重抓当年数据,兜底国务院临时调整;
