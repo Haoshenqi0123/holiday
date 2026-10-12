@@ -17,7 +17,7 @@ import {
   weekdayOf,
   yesterdayBeijing,
 } from "./beijing";
-import { toStatusSets, statusOf, getYearData, invalidateMem, type Env, type YearResult } from "./store";
+import { toStatusSets, statusOf, getYearData, invalidateMem, MissingKVError, type Env, type YearResult } from "./store";
 import type { StatusSets } from "./store";
 
 const CORS_HEADERS: Record<string, string> = {
@@ -200,6 +200,15 @@ export default {
       if (path === "/holiday/update") return await handleUpdate(request, env, url);
       return json({ error: `未知路径:${path}` }, 404);
     } catch (e) {
+      if (e instanceof MissingKVError) {
+        return json(
+          {
+            error: "服务未就绪:Worker 没有绑定 KV 命名空间,已拒绝回源抓取",
+            how_to_fix: "设置构建变量 HOLIDAY_KV_ID 后重新部署,步骤见仓库 DEPLOY.md",
+          },
+          503
+        );
+      }
       return json({ error: "服务内部错误", detail: String(e) }, 500);
     }
   },
@@ -212,6 +221,10 @@ export default {
    *   3. 每月 25 日刷新当年数据;11、12 月同时抓取次年数据。
    */
   async scheduled(_controller: ScheduledController, env: Env): Promise<void> {
+    if (!env.HOLIDAY_KV) {
+      console.error("定时任务跳过:HOLIDAY_KV 未绑定,不回源抓取百度");
+      return;
+    }
     const nowBeijing = new Date(Date.now() + 8 * 60 * 60 * 1000);
     const year = nowBeijing.getUTCFullYear();
     const month = nowBeijing.getUTCMonth() + 1;

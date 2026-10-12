@@ -4,7 +4,7 @@
 >
 > 老接口 `http://api.haoshenqi.top/holiday` 由早期的 Java + MySQL 服务提供，**将于 2026-11-03 下线**，届时该地址不再保证任何响应。
 >
-> 本仓库已重写为 Cloudflare Workers 版本，不需要服务器、不需要数据库。**请 fork 本仓库并按 [DEPLOY.md](DEPLOY.md) 部署到你自己账号下的 Worker** —— 免费套餐即可，全程约十分钟，仓库里不含任何账号专属值，改都不用改。
+> 本仓库已重写为 Cloudflare Workers 版本，不需要服务器、不需要数据库。**请 fork 本仓库并按 [DEPLOY.md](DEPLOY.md) 部署到你自己账号下的 Worker** —— 免费套餐即可，全程约十分钟：建一个 KV 命名空间、把它填进一个构建变量，其余什么都不用改（仓库里不含任何账号专属值）。
 >
 > 我的实例在 `https://holiday.magichouse.top`，仅作示例与对照，**不承诺可用性和长期存在**，请别把它写成生产依赖。
 
@@ -34,6 +34,7 @@ GET /holiday/update            # 手动刷新当年 + 次年数据,需密钥
 * 响应头 `X-Data-Source` 标明数据来源:`memory`(内存缓存)/ `kv` / `baidu`(现抓)/ `heuristic`(按星期推导)。
 * 所有响应带 CORS 头,网页前端可直接调用。
 * `/holiday/update` 需要 `UPDATE_KEY`,支持 `?key=` 或 `Authorization: Bearer` 两种传法;未配置密钥时该接口始终返回 403。
+* Worker 强制依赖 KV:没有 `HOLIDAY_KV` 绑定时数据接口返回 **503** 并拒绝回源百度(`/` 自述页仍返回 200,便于区分「服务活着」和「配置缺东西」)。
 
 ## 代码结构
 
@@ -53,15 +54,16 @@ GET /holiday/update            # 手动刷新当年 + 次年数据,需密钥
 ```bash
 npm install
 cp .dev.vars.example .dev.vars          # 想在本地测 update 接口
-npm run dev                             # http://localhost:8787,无 KV 模式,无需登录
-HOLIDAY_KV_ID=<你的 id> npm run dev     # 想连 KV 本地模拟就传
+npm run dev                             # http://localhost:8787,无需登录
 ```
+
+dev 不需要真的 KV:wrangler 用的是本地模拟,`scripts/link-kv.mjs --dev` 在未设置 `HOLIDAY_KV_ID` 时自动填占位 id。想连自己的 namespace 测就 `HOLIDAY_KV_ID=<id> npm run dev`。
 
 ## 部署
 
-完整步骤见 **[DEPLOY.md](DEPLOY.md)**:dashboard git 集成(表单逐项取值、生产分支那个坑)、本地 `wrangler` 部署、`HOLIDAY_KV_ID` 与 `UPDATE_KEY` 两个可选变量的配法、访问验证、故障排查。
+完整步骤见 **[DEPLOY.md](DEPLOY.md)**:dashboard git 集成(表单逐项取值、生产分支那个坑)、本地 `wrangler` 部署、`HOLIDAY_KV_ID`(必需)与 `UPDATE_KEY`(可选)的配法、访问验证、故障排查。
 
-两个变量都不设也能直接上线:Worker 不绑 KV、`/holiday/update` 关闭,其余接口照常。之所以用「构建时生成 `wrangler.gen.jsonc`」来注入 KV id,而不是写死在仓库里 —— 实测 wrangler 4.x 不支持配置内 `${VAR}` 插值、`deploy` 也没有 `--kv` 参数;而把某个账号的 namespace id 提交进仓库,fork 者要么改代码,要么把自己的数据写进别人的 KV。
+`HOLIDAY_KV_ID` 是硬要求,不配构建直接失败 —— 无缓存形态下每个请求都会回源抓百度,而百度按调用方 IP 频控,入口被刷几次就会连数据源一起封掉。之所以用「构建时生成 `wrangler.gen.jsonc`」来注入而不是写死在仓库里:实测 wrangler 4.x 不支持配置内 `${VAR}` 插值、`deploy` 也没有 `--kv` 参数;而把某个账号的 namespace id 提交进仓库,fork 者要么改代码,要么把自己的数据写进别人的 KV。
 
 ## 运行机制
 

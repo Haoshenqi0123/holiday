@@ -1,7 +1,7 @@
 /**
  * 年度数据存取:隔离实例内存缓存 -> Workers KV -> 百度接口,三级递进。
- * 对应 Java 版 HolidayDateService + MySQL 的角色:数据落到 KV 后,
- * 绝大多数请求不再依赖百度,只有首次访问或定时刷新才会出网。
+ * KV 是必需依赖:没有 KV 时每次请求都会出网抓百度,百度侧有 IP 频控,
+ * 因此宁可返回 503 也不允许无缓存裸奔(见 MissingKVError)。
  */
 import { fetchYearFromBaidu, type YearHolidayData } from "./baidu";
 import { weekdayOf } from "./beijing";
@@ -9,6 +9,14 @@ import { weekdayOf } from "./beijing";
 export interface Env {
   HOLIDAY_KV?: KVNamespace;
   UPDATE_KEY?: string;
+}
+
+/** 未绑定 KV 时由数据层抛出,调用方据此拒绝出网抓取 */
+export class MissingKVError extends Error {
+  constructor() {
+    super("HOLIDAY_KV 未绑定");
+    this.name = "MissingKVError";
+  }
 }
 
 export type DataSource = "memory" | "kv" | "baidu" | null;
@@ -59,12 +67,15 @@ export async function getYearData(
   year: number,
   forceRefresh = false
 ): Promise<YearResult> {
+  const kv = env.HOLIDAY_KV;
+  if (!kv) throw new MissingKVError();
+
   if (!forceRefresh) {
     const mem = memGet(year);
     if (mem !== undefined) {
       return { data: mem, source: mem === null ? null : "memory" };
     }
-    const fromKv = await readKv(env, year);
+    const fromKv = await readKv(kv, year);
     if (fromKv !== undefined) {
       memPut(year, fromKv);
       return { data: fromKv, source: "kv" };
@@ -75,7 +86,7 @@ export async function getYearData(
   const empty = fresh === null || (fresh.holidays.length === 0 && fresh.workdays.length === 0);
   if (empty) {
     // 抓取失败或该年数据未公布:优先回退 KV 中已有的旧数据,不要用空结果覆盖
-    const fromKv = await readKv(env, year);
+    const fromKv = await readKv(kv, year);
     if (fromKv !== undefined) {
       memPut(year, fromKv);
       return { data: fromKv, source: "kv" };
@@ -85,30 +96,31 @@ export async function getYearData(
   }
 
   memPut(year, fresh);
-  await writeKv(env, fresh);
+  await writeKv(kv, fresh);
   return { data: fresh, source: "baidu" };
 }
 
-async function readKv(env: Env, year: number): Promise<YearHolidayData | undefined> {
-  if (!env.HOLIDAY_KV) return undefined;
+async function readKv(kv: KVNamespace, year: number): Promise<YearHolidayData | undefined> {
   try {
-    const data = await env.HOLIDAY_KV.get<YearHolidayData>(kvKey(year), "json");
+    const data = await kv.get<YearHolidayData>(kvKey(year), "json");
     if (!data) return undefined;
     // 空数据没有缓存价值,视为未命中
     if (data.holidays.length === 0 && data.workdays.length === 0) return undefined;
     return data;
-  } catch {
+  } catch (e) {
+    // 读失败降级为现抓,但必须留痕:静默降级会让「KV 其实没通」看起来一切正常
+    console.error("KV 读取失败,本次降级为现抓:", kvKey(year), e);
     return undefined;
   }
 }
 
-async function writeKv(env: Env, data: YearHolidayData): Promise<void> {
-  if (!env.HOLIDAY_KV) return;
+async function writeKv(kv: KVNamespace, data: YearHolidayData): Promise<void> {
   try {
     // KV 最终一致 + 每天写入次数极少,直接覆盖即可
-    await env.HOLIDAY_KV.put(kvKey(data.year), JSON.stringify(data));
-  } catch {
-    // 写失败不影响本次响应,下次请求会重试
+    await kv.put(kvKey(data.year), JSON.stringify(data));
+  } catch (e) {
+    // 写失败不阻塞响应:免费版每天 1000 次写,额度耗尽时接口仍须可用
+    console.error("KV 写入失败:", kvKey(data.year), e);
   }
 }
 

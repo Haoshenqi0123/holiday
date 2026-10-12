@@ -2,14 +2,15 @@
 // 这里刻意不含任何 namespace id:部署时由 scripts/link-kv.mjs 读取环境变量
 // HOLIDAY_KV_ID 生成 wrangler.gen.jsonc,实际生效的是那份文件。
 //   设了 HOLIDAY_KV_ID -> 绑定你自己的 KV
-//   不设              -> 保持空绑定,Worker 降级为「内存缓存 + 现抓百度」(src/store.ts 判空)
+//   不设                -> link-kv.mjs 以退出码 1 拒绝部署:KV 是硬依赖,没有缓存层
+//                          每个请求都会回源抓百度,而百度按 IP 频控(src/store.ts 会抛 MissingKVError)
 // 可选密钥 UPDATE_KEY 用于放开 /holiday/update,不配则该接口固定返回 403。
 {
   "$schema": "https://unpkg.com/wrangler/config-schema.json",
   "name": "holiday",
   "main": "src/index.ts",
   "compatibility_date": "2026-09-01",
-  // 留空即「不用 KV」,link-kv.mjs 会按环境变量填充
+  // 这个空数组是 link-kv.mjs 的注入锚点，字面量别改；实际 id 由 HOLIDAY_KV_ID 填进来
   "kv_namespaces": [],
   // 定时任务:每天 17:00 UTC = 北京时间次日 01:00
   // 对应原 Java 版 ScheduledService 的每日凌晨检查逻辑
