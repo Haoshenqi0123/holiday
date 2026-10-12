@@ -1,6 +1,14 @@
 # 法定节假日查询 API
 
-不依赖服务器:HTTP 服务、定时抓取、数据缓存全部跑在 Cloudflare Workers 边缘网络上,免费套餐即可长期运行。由本项目早期的 Java(Spring Boot + MySQL) 版迁移而来,数据源同样是百度 opendata 接口。
+> **⚠️ 服务迁移公告 · 2026-10-12**
+>
+> 老接口 `http://api.haoshenqi.top/holiday` 由早期的 Java + MySQL 服务提供，**将于 2026-11-03 下线**，届时该地址不再保证任何响应。
+>
+> 本仓库已重写为 Cloudflare Workers 版本，不需要服务器、不需要数据库。**请 fork 本仓库并按 [DEPLOY.md](DEPLOY.md) 部署到你自己账号下的 Worker** —— 免费套餐即可，全程约十分钟，仓库里不含任何账号专属值，改都不用改。
+>
+> 我的实例在 `https://holiday.magichouse.top`，仅作示例与对照，**不承诺可用性和长期存在**，请别把它写成生产依赖。
+
+HTTP 服务、定时抓取、数据缓存全部跑在 Cloudflare Workers 边缘网络上,数据源是百度 opendata 接口,免费套餐即可长期运行。
 
 ## 接口
 
@@ -63,6 +71,25 @@ HOLIDAY_KV_ID=<你的 id> npm run dev     # 想连 KV 本地模拟就传
   2. 今天是节假日最后一天时重抓当年数据,兜底国务院临时调整;
   3. 每月 25 日刷新当年数据;11、12 月同时抓取次年数据。
 * **成本**:免费版 KV 每天 10 万次读、1000 次写,本服务日常每天写入不超过 2 次,完全够用。
+
+## 从 Java 版迁移过来
+
+| | Java 版（2026-10 之前） | Workers 版（现在） |
+| --- | --- | --- |
+| 运行时 | 自建服务器 + Docker + MySQL | Cloudflare Workers 边缘，无服务器 |
+| 存储 | `holiday_date` 表逐日入库 | KV 按年存两份列表，键名 `holiday:{year}` |
+| 抓取 | `GetByBaidu` | `src/baidu.ts`，同一数据源 |
+| 定时任务 | Spring `@Scheduled` | cron `0 17 * * *`（北京时间 01:00），逻辑等价 |
+
+接口路径与响应字段保持兼容，但有几处行为差异，老客户端要留意：
+
+* 只提供 `https://`，`http://api.haoshenqi.top` 那个明文入口随之下线。
+* 参数非法时 Java 版返回 `null`（`HolidayController` 里 catch 后直接 `return null`），现在返回 **400 + JSON 错误信息**。
+* `/holiday/update` 在 Java 版里为防滥用被整段注释掉了，这里恢复开放，但需要 `UPDATE_KEY`；不配置该变量时该接口固定返回 403。
+
+新增能力：所有响应带 CORS 头（网页前端可直接调用）、`X-Data-Source` 头标明本次数据来自哪一层。
+
+**为什么不再提供一个公共实例给大家共用**：无服务器架构下不存在「我替你扛流量」的中心节点 —— Workers 与 KV 的免费额度按账号计算，公共入口一旦被刷，所有使用者会同时拿到超额错误（超额只会报错、不会产生费用，所以也无法靠付费兜底）。各自账号内部署反而互不影响，这就是本仓库做到 fork 后零改动的原因。
 
 ## 打赏
 
