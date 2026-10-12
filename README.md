@@ -93,6 +93,8 @@ HOLIDAY_KV_ID=<你的 id> npm run dev     # 想连 KV 本地模拟就传
 
 ## 打赏
 
-<img src="https://oss.haoshenqi.top/pay/IMG_2690.JPG" width = "400" height = "400" alt="支付宝" align=center>
+用 OSS 原始域名而非 `oss.haoshenqi.top`：后者的证书 2024-06-23 已过期，浏览器会直接拒绝加载图片。
 
-<img src="https://oss.haoshenqi.top/pay/IMG_2692.JPG" width = "400" height = "400" alt="微信" align=center>
+<img src="https://magichouse-pub-read.oss-cn-hangzhou.aliyuncs.com/pay/IMG_2690.JPG" width = "400" height = "400" alt="支付宝" align=center>
+
+<img src="https://magichouse-pub-read.oss-cn-hangzhou.aliyuncs.com/pay/IMG_2692.JPG" width = "400" height = "400" alt="微信" align=center>
