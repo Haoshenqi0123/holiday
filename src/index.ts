@@ -168,7 +168,7 @@ function handleOptions(): Response {
 /** GET /:接口说明 */
 function handleIndex(): Response {
   return json({
-    name: "holiday-api (Cloudflare Workers)",
+    name: "holiday (Cloudflare Workers)",
     endpoints: {
       "/holiday?date=yyyy-MM-dd": "查一天,也支持 yyyy-MM / yyyy,返回 JSON 数组",
       "/holiday/today": '今天上班吗,纯文本 "工作"/"休息"',

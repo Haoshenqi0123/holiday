@@ -6,7 +6,7 @@
 // 可选密钥 UPDATE_KEY 用于放开 /holiday/update,不配则该接口固定返回 403。
 {
   "$schema": "https://unpkg.com/wrangler/config-schema.json",
-  "name": "holiday-api",
+  "name": "holiday",
   "main": "src/index.ts",
   "compatibility_date": "2026-09-01",
   // 留空即「不用 KV」,link-kv.mjs 会按环境变量填充
