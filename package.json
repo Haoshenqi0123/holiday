@@ -4,8 +4,8 @@
   "private": true,
   "description": "法定节假日查询 API 的 Cloudflare Workers 版本",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "dev": "node scripts/link-kv.mjs && wrangler dev -c wrangler.gen.jsonc",
+    "deploy": "node scripts/link-kv.mjs && wrangler deploy -c wrangler.gen.jsonc",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

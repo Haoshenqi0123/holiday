@@ -35,29 +35,48 @@ GET /holiday/update            # 手动刷新当年 + 次年数据,需密钥
 | `src/baidu.ts` | 抓百度 opendata,解析节假日 / 补班日 |
 | `src/store.ts` | 内存缓存 + KV 读写,状态计算 |
 | `src/beijing.ts` | 北京时间与日期工具 |
-| `wrangler.jsonc` | Worker 配置:KV 绑定、cron |
+| `wrangler.jsonc` | 配置模板:Worker 名、cron;KV 由 `scripts/link-kv.mjs` 按环境变量注入 |
 
 数据模型比建表简单:一年只存两份列表(法定节假日 `holidays`、需要补班的周末 `workdays`),键名 `holiday:{year}`;普通工作日/周末由星期几直接推导,无需逐日入库。
+
+## 配置项(全部可选)
+
+仓库里不含任何与具体账号相关的值,fork 之后不必改代码,两个开关都走环境变量:
+
+| 变量 | 作用 | 不设置时 |
+| --- | --- | --- |
+| `HOLIDAY_KV_ID` | 你自己账号下 KV 命名空间的 Namespace ID(32 位十六进制),按年缓存节假日数据 | 不绑定 KV,退化为「内存缓存 + 现抓百度」;接口行为不变,只是失去跨实例缓存和抓取失败时回退旧数据的能力 |
+| `UPDATE_KEY` | 放开 `GET /holiday/update` 手动刷新接口的口令 | 该接口固定返回 403,数据仍由每天 01:00 的定时任务刷新 |
+
+`wrangler.jsonc` 只是模板。`npm run dev` / `npm run deploy` 会先执行 `scripts/link-kv.mjs`,按 `HOLIDAY_KV_ID` 生成 `wrangler.gen.jsonc`(已 gitignore,id 因此不会进版本库),再用它部署。之所以要生成而不是插值:wrangler 4.x 不支持在配置里写 `${VAR}`,`deploy` 也没有 `--kv` 参数。
 
 ## 本地开发
 
 ```bash
 npm install
-cp .dev.vars.example .dev.vars   # 想在本地测 update 接口
-npm run dev                      # http://localhost:8787,KV 用本地模拟,无需登录
+cp .dev.vars.example .dev.vars          # 想在本地测 update 接口
+npm run dev                             # http://localhost:8787,无 KV 模式,无需登录
+HOLIDAY_KV_ID=<你的 id> npm run dev     # 想连 KV 本地模拟就传
 ```
 
 ## 部署到 Cloudflare(免费账号即可)
 
+### 方式一:连 GitHub 仓库,push 自动部署
+
+1. dashboard → Workers & Pages → Create application → 选中仓库,**生产分支填存放 Worker 代码的分支**(本仓库是 `cloudflare-workers`;默认取仓库默认分支,不改就找不到 `package.json`)。
+2. 构建命令留空,部署命令填 `npm run deploy`,根目录留空。
+3. 可选:在项目的变量(Variables)里加 `HOLIDAY_KV_ID` = 你的 Namespace ID。KV 命名空间在 dashboard → Storage & Databases → KV 创建,建好后概览页直接复制 ID。
+4. 可选:Settings → Variables and Secrets → Add secret,名称 `UPDATE_KEY`。
+
+### 方式二:本地 wrangler 部署
+
 ```bash
-npx wrangler login                              # 1. 登录
-npx wrangler kv namespace create HOLIDAY_KV     # 2. 创建 KV
-#    把输出中的 id 填入 wrangler.jsonc 的 kv_namespaces[0].id
-npx wrangler secret put UPDATE_KEY              # 3. 设置 update 接口密钥(可选)
-npm run deploy                                  # 4. 部署
+npx wrangler login
+npx wrangler kv namespace create HOLIDAY_KV   # 可选,输出里的 id 即 HOLIDAY_KV_ID
+HOLIDAY_KV_ID=<id> npm run deploy
 ```
 
-部署后即可通过 `https://holiday-api.<你的子域>.workers.dev/holiday` 访问。
+部署后即可通过 `https://holiday-api.<你的子域>.workers.dev/holiday` 访问(Worker 名取自 `wrangler.jsonc` 的 `name`)。
 
 ### 绑定自有域名(可选)
 

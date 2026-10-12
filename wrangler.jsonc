@@ -1,21 +1,16 @@
-// Cloudflare Workers 配置
-// 部署前需要:
-//   1. npx wrangler kv namespace create HOLIDAY_KV
-//      把输出的 id 填到下面 kv_namespaces[0].id
-//   2. npx wrangler secret put UPDATE_KEY
-//      设置 /holiday/update 接口的访问密钥(不设置则该接口始终返回 403)
+// Cloudflare Workers 配置(模板)
+// 这里刻意不含任何 namespace id:部署时由 scripts/link-kv.mjs 读取环境变量
+// HOLIDAY_KV_ID 生成 wrangler.gen.jsonc,实际生效的是那份文件。
+//   设了 HOLIDAY_KV_ID -> 绑定你自己的 KV
+//   不设              -> 保持空绑定,Worker 降级为「内存缓存 + 现抓百度」(src/store.ts 判空)
+// 可选密钥 UPDATE_KEY 用于放开 /holiday/update,不配则该接口固定返回 403。
 {
   "$schema": "https://unpkg.com/wrangler/config-schema.json",
   "name": "holiday-api",
   "main": "src/index.ts",
   "compatibility_date": "2026-09-01",
-  // 免费版即可运行:按年缓存数据,每天只有个位数的写操作
-  "kv_namespaces": [
-    {
-      "binding": "HOLIDAY_KV",
-      "id": "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
-    }
-  ],
+  // 留空即「不用 KV」,link-kv.mjs 会按环境变量填充
+  "kv_namespaces": [],
   // 定时任务:每天 17:00 UTC = 北京时间次日 01:00
   // 对应原 Java 版 ScheduledService 的每日凌晨检查逻辑
   "triggers": {
